@@ -1,0 +1,5 @@
+.venv/*
+.vscode/*
+.env
+.mypy_cache/*
+app/lib/__pycache__/*

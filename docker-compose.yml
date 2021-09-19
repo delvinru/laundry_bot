@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  bot:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    volumes:
+      - ./app/db:/app/db
+    environment:
+      - TOKEN=${TOKEN}
+      - ADMINS=${ADMINS}
+    restart: always
