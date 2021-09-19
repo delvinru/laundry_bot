@@ -8,7 +8,7 @@ from loguru import logger
 from sqlalchemy import exc
 from sqlmodel import Session, select
 
-from .db_objects import Laundry
+from .db_objects import Laundry, Users
 from .settings import TOKEN, engine
 
 
@@ -56,25 +56,38 @@ def update_state(machine: str, name: str, tgid: int) -> str:
         except exc.NoResultFound:
             return text('Извини, но машинка уже занята😌')
 
-        # Change end value
-        laundry.check = True
-        laundry.end = datetime.now() + timedelta(hours=1)
-        # Craft response text
-        data = bold(name) + f' закончит в {laundry.end.hour}:{laundry.end.minute}'
+    # Change end value
+    laundry.check = True
+    laundry.end = datetime.now() + timedelta(hours=1)
+    # Craft response text
+    data = bold(name) + f' закончит в {laundry.end.hour}:{laundry.end.minute}'
 
-        # Save changed data
-        s.add(laundry)
+    # Save changed data
+    s.add(laundry)
+    s.commit()
+
+    # Start notify thread
+    thread = Thread(target=between_notify, args=(machine, tgid))
+    thread.daemon = True
+    thread.start()
+
+    # Info log
+    logger.info(f'User {tgid} took {machine}')
+
+    # Add stats to database
+    with Session(engine) as s:
+        statement = select(Users).where(Users.tgid == tgid)
+        user = s.exec(statement).one()
+        if machine == 'laundry_1':
+            user.laundry_1 += 1
+        elif machine == 'laundry_2':
+            user.laundry_2 += 1
+        elif machine == 'dryer':
+            user.dryer += 1
+        s.add(user)
         s.commit()
 
-        # Start notify thread
-        thread = Thread(target=between_notify, args=(machine, tgid))
-        thread.daemon = True
-        thread.start()
-
-        # Info log
-        logger.info(f'User {tgid} took {machine}')
-
-        return data
+    return data
 
 
 async def process_args(args: str, uid: int) -> str:
@@ -108,9 +121,9 @@ def check_laundry() -> str:
             elif laundry.machine == 'dryer':
                 text += bold('Сушилка: ')
 
-            if laundry.check == 0:
+            if laundry.check == False:
                 text += '✅\n'        
             else:
-                text += '❌\n'
+                text += f'❌ до {laundry.end.hour}:{laundry.end.minute}\n'
 
     return text

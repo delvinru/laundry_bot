@@ -4,7 +4,6 @@ import sys
 from aiogram import Bot
 from aiogram.types import BotCommand
 from loguru import logger
-from sqlalchemy import desc
 
 # Import handlers for bot
 from lib.handlers import *
@@ -30,6 +29,7 @@ async def main():
     # Setup middleware
     dp.middleware.setup(CheckLogin())
 
+    logger.info('[+] Bot started...')
     # Start long polling for bot
     await dp.start_polling()
 
