@@ -4,6 +4,7 @@ import sys
 from aiogram import Bot
 from aiogram.types import BotCommand
 from loguru import logger
+from sqlalchemy import desc
 
 # Import handlers for bot
 from lib.handlers import *
@@ -14,21 +15,20 @@ from lib.middleware import CheckLogin
 
 async def set_commands(bot: Bot):
     """ Setup commands for Telegram bot """
-
     commands = [
         BotCommand(command="/start",  description="Начать взаимодействие с ботом"),
         BotCommand(command="/check",  description="Проверить стиралки"),
-        BotCommand(command="/launch", description="Запустить стиралку")
+        BotCommand(command="/help",   description="Помощь"),
+        BotCommand(command="/dev",    description="Разработчик бота")
     ]
-
-    # Setup middleware
-    dp.middleware.setup(CheckLogin())
-
     await bot.set_my_commands(commands)
 
 
 async def main():
     await set_commands(bot)
+
+    # Setup middleware
+    dp.middleware.setup(CheckLogin())
 
     # Start long polling for bot
     await dp.start_polling()

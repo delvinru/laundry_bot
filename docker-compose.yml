@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./app/db:/app/db
+      - ./app/logs:/app/logs
     environment:
       - TOKEN=${TOKEN}
       - ADMINS=${ADMINS}

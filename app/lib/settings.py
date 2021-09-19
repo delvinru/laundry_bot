@@ -1,6 +1,8 @@
-from os import getenv
+from os import getenv, path
+
 from aiogram import Bot, Dispatcher, types
-from sqlmodel import Session, create_engine, SQLModel
+from sqlmodel import Session, SQLModel, create_engine
+
 # Import database objects
 from .db_objects import Laundry, Users
 
@@ -27,19 +29,20 @@ bot = Bot(token=TOKEN, parse_mode=types.ParseMode.MARKDOWN_V2)
 dp = Dispatcher(bot)
 
 # Setup sqlmodel
-sqlite_file = 'db/databasse.db'
+sqlite_file = 'db/database.db'
 sqlite_url = f'sqlite:///{sqlite_file}'
 connect_args = {
-	"check_same_thread" : False
+    "check_same_thread": False
 }
 
-engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
+engine = create_engine(sqlite_url, echo=False, connect_args=connect_args)
 
-# Init machines
-with Session(engine) as s:
-	s.add(Laundry(machine="laundry_1"))
-	s.add(Laundry(machine="laundry_2"))
-	s.add(Laundry(machine="dryer"))
-
-# Create database and tables
-SQLModel.metadata.create_all(engine)
+if not path.exists(sqlite_file):
+    # Create database and tables if not exists
+    SQLModel.metadata.create_all(engine)
+    # Init machines
+    with Session(engine) as s:
+        s.add(Laundry(machine="laundry_1"))
+        s.add(Laundry(machine="laundry_2"))
+        s.add(Laundry(machine="dryer"))
+        s.commit()

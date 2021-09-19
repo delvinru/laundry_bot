@@ -1,11 +1,13 @@
-from sqlmodel import Field, SQLModel
+from datetime import datetime
 from typing import Optional
+
+from sqlmodel import Field, SQLModel
 
 
 class Laundry(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     machine: str
-    end: int = 0
+    end: Optional[datetime] = Field(default=None)
     check: bool = False
 
 

@@ -27,4 +27,5 @@ class CheckLogin(BaseMiddleware):
                     tgid = message.from_user.id,
                     nickname = message.from_user.username,
                 ))
+                s.commit()
                 logger.info(f'User {message.from_user} {message.from_user.username} registered!')
