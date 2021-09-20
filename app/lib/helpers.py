@@ -29,6 +29,8 @@ async def notify_user(machine: str, uid: int):
     await bot.send_message(chat_id=uid, text=data)
 
     await asyncio.sleep(3 * 60)
+    data = "Стирка завершена, забери вещи ✅"
+    await bot.send_message(chat_id=uid, text=data)
     await bot.close()
 
     logger.info(f'Clear state for machine: {machine}')
