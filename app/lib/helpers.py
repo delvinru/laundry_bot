@@ -130,6 +130,15 @@ def check_laundry() -> str:
             if laundry.check == False:
                 text += '✅\n'        
             else:
-                text += f'❌ до {laundry.end.hour}:{laundry.end.minute}\n'
+                text += f'❌ до '
+                if laundry.end.hour < 10:
+                    text += f'0{laundry.end.hour}:'
+                else:
+                    text += f'{laundry.end.hour}:'
+
+                if laundry.end.minute < 10:
+                    text += f'0{laundry.end.minute}\n'
+                else:
+                    text += f'{laundry.end.minute}\n'
 
     return text
