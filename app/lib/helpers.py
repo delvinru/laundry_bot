@@ -60,7 +60,11 @@ def update_state(machine: str, name: str, tgid: int) -> str:
 
     # Change end value
     laundry.check = True
-    laundry.end = datetime.now() + timedelta(hours=1)
+
+    if machine == 'dryer':
+        laundry.end = datetime.now() + timedelta(minutes=10)
+    else:
+        laundry.end = datetime.now() + timedelta(hours=1)
     # Craft response text
     data = bold(name) + f'закончит в {laundry.end.hour}:'
     if laundry.end.minute < 10:
