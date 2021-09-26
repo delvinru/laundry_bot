@@ -6,3 +6,4 @@ app/lib/__pycache__/*
 app/db/database.db
 app/logs/debug.log
 qr/*
+.idea/
