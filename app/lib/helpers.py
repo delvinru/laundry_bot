@@ -66,7 +66,7 @@ def update_state(machine: str, name: str, tgid: int) -> str:
     else:
         laundry.end = datetime.now() + timedelta(hours=1)
     # Craft response text
-    data = bold(name) + f'закончит в {laundry.end.hour}:'
+    data = bold(name) + f' закончит в {laundry.end.hour}:'
     if laundry.end.minute < 10:
         data += f'0{laundry.end.minute}'
     else:
