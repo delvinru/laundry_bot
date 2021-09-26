@@ -17,21 +17,31 @@ async def notify_user(machine: str, uid: int):
 
     # Create new session
     bot = Bot(token=TOKEN)
-    
-    await asyncio.sleep(50 * 60)
-    data = "Забрать вещи можно через 10 минут ❗️"
-    await bot.send_message(chat_id=uid, text=data)
-    logger.info(f'10 minute warning for user {uid}')
 
-    await asyncio.sleep(7 * 60)
-    data = "Забрать вещи можно через 3 минуты ❗️"
-    logger.info(f'3 minute warning for user {uid}')
-    await bot.send_message(chat_id=uid, text=data)
+    if machine == "dryer":
+        data = "Забрать вещи можно через 10 минут ❗️"
+        await bot.send_message(chat_id=uid, text=data)
+        logger.info(f'10 minute warning for user {uid} with machine {machine}')
 
-    await asyncio.sleep(3 * 60)
-    data = "Стирка завершена, забери вещи ✅"
-    await bot.send_message(chat_id=uid, text=data)
-    await bot.close()
+        await asyncio.sleep(10 * 60)
+        data = "Сушка завершена, забери вещи ✅"
+        await bot.send_message(chat_id=uid, text=data)
+        await bot.close()
+    else:
+        await asyncio.sleep(50 * 60)
+        data = "Забрать вещи можно через 10 минут ❗️"
+        await bot.send_message(chat_id=uid, text=data)
+        logger.info(f'10 minute warning for user {uid} with machine {machine}')
+
+        await asyncio.sleep(7 * 60)
+        data = "Забрать вещи можно через 3 минуты ❗️"
+        logger.info(f'3 minute warning for user {uid} with machine {machine}')
+        await bot.send_message(chat_id=uid, text=data)
+
+        await asyncio.sleep(3 * 60)
+        data = "Стирка завершена, забери вещи ✅"
+        await bot.send_message(chat_id=uid, text=data)
+        await bot.close()
 
     logger.info(f'Clear state for machine: {machine}')
     with Session(engine) as s:
